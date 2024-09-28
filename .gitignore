@@ -1,0 +1,14 @@
+.venv
+*.pyo
+
+__pycache__/
+*.pyc
+
+finalize.py
+*.Z
+
+db.sqlite3
+*.log
+
+try/
+.DS_Store

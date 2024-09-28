@@ -9,34 +9,51 @@ def file_download():
     today = datetime.now()
     extracted_date = today + timedelta(-1)
     print(extracted_date)
-    required_date = extracted_date.strftime('%Y-%m-%d')
-    download_url = f'https://dps.psx.com.pk/download/mkt_summary/{required_date}.Z'
+    required_date = extracted_date.strftime("%Y-%m-%d")
+    download_url = f"https://dps.psx.com.pk/download/mkt_summary/{required_date}.Z"
     try:
         req = requests.get(download_url)
-        file_name = req.url[download_url.rfind('/')+1:]
+        file_name = req.url[download_url.rfind("/") + 1 :]
         print(file_name)
         if file_name:
-            print('File Name: ', file_name)
-            with open(file_name, 'wb') as f:
+            print("File Name: ", file_name)
+            with open(file_name, "wb") as f:
                 f.write(req.content)
                 with zipfile.ZipFile(file_name) as myzip:
                     myzip.printdir()
-                    data = myzip.read('closing11.lis')
-                    decoded_data = data.decode('utf-8')
-                    lines = decoded_data.strip().split('\r\n')
-                    headers = ['Date', 'Symbol', 'Code', 'Company Name', 'Open Rate', 'Highest', 'Lowest', 'Closing Rate', 'Turn Over', 'Prev. Rate', 'Extra-1', 'Extra-2', 'Extra-3']
-                    df = pd.DataFrame([line.split('|') for line in lines], columns=headers)
+                    data = myzip.read("closing11.lis")
+                    decoded_data = data.decode("utf-8")
+                    lines = decoded_data.strip().split("\r\n")
+                    headers = [
+                        "Date",
+                        "Symbol",
+                        "Code",
+                        "Company Name",
+                        "Open Rate",
+                        "Highest",
+                        "Lowest",
+                        "Closing Rate",
+                        "Turn Over",
+                        "Prev. Rate",
+                        "Extra-1",
+                        "Extra-2",
+                        "Extra-3",
+                    ]
+                    df = pd.DataFrame(
+                        [line.split("|") for line in lines], columns=headers
+                    )
                     print(df)
-                    df.to_csv(f'{required_date}.csv')
+                    df = df.drop(['Extra-1', 'Extra-2', 'Extra-3'], axis=1)
+                    print(df)
+                    df.to_csv(f"{required_date}.csv", index=False)
+                
 
-                    print('File downloaded successfully and converted to a csv file')
+                    print("File downloaded successfully and converted to a csv file")
 
         else:
-            print('File not Found')
+            print("File not Found")
     except requests.exceptions.RequestException as e:
         print(f"Download failed: {e}")
 
 
-
 file_download()
-
