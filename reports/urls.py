@@ -2,5 +2,5 @@ from django.urls import path
 from .views import *
 
 urlpatterns = [
-    path('view/', report_view ),
+    path('view/', StockDataUploadView.as_view()),
 ]
