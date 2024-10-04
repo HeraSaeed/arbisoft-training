@@ -38,6 +38,9 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
+    'django_celery_beat',
+    'django_celery_results',
+
     "reports",
 ]
 
@@ -107,11 +110,20 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "UTC"
+TIME_ZONE = "Asia/Karachi"
 
 USE_I18N = True
 
 USE_TZ = True
+
+CELERY_TIMEZONE = 'Asia/Karachi'
+CELERY_TASK_TRACK_STARTED = True
+
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_RESULTS_BACKEND = 'django-db'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TASK_SERIALIZER = 'json'
 
 
 # Static files (CSS, JavaScript, Images)

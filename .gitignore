@@ -12,3 +12,4 @@ db.sqlite3
 
 try/
 .DS_Store
+changes.patch
