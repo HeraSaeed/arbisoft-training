@@ -116,15 +116,19 @@ USE_I18N = True
 
 USE_TZ = True
 
-CELERY_TIMEZONE = 'Asia/Karachi'
-CELERY_TASK_TRACK_STARTED = True
+# CELERY SETTINGS
 
 CELERY_BROKER_URL = 'redis://localhost:6379/0'
-CELERY_RESULTS_BACKEND = 'django-db'
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_BACKEND = 'django-db'
+CELERY_TIMEZONE = 'Asia/Karachi'
+CELERY_TASK_TRACK_STARTED = True
 
+
+#CELERY BEAT 
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/

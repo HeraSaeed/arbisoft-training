@@ -1,25 +1,27 @@
-
-import os
-import django
-
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'newproject.settings')  # Update with your settings module
-django.setup()
-
 from celery import shared_task
 import requests
 import zipfile
 import pandas as pd
-from datetime import datetime
+from datetime import datetime, timedelta
 from reports.serializer import ReportDataSerializer
-from rest_framework.response import Response
-from rest_framework import status
 
 
 
 @shared_task(bind=True)
-def download_daily_report():
-        today = datetime.now().strftime("%Y-%m-%d")
-        download_url = f"https://dps.psx.com.pk/download/mkt_summary/{today}.Z"
+def test_func(self):
+    for i in range(10):
+        print(i)
+    return "Done...!!!"
+
+    
+@shared_task(bind=True)
+def download_daily_report(*args, **kwargs):
+        today = datetime.now()
+        previous = today + timedelta(-1)
+        required = previous.strftime("%Y-%m-%d")
+        print(previous)
+        print(required)
+        download_url = f"https://dps.psx.com.pk/download/mkt_summary/{required}.Z"
         try:
             req = requests.get(download_url)
             file_name = req.url[download_url.rfind("/") + 1 :]
@@ -69,13 +71,12 @@ def download_daily_report():
                             if serializer.is_valid():
                                 serializer.save()
                             else:
-                                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-                return Response({'message':"Data saved succesfully."}, status=status.HTTP_201_CREATED)
+                                return {'error': serializer.errors, 'status':'Failed'}
+                return {'message':"Data saved succesfully.", 'status': 'success'}
                     
 
             else:
-                return Response({'messgae':'Failed to download file from URL.'}, status=status.HTTP_400_BAD_REQUEST)
+                return {'messgae':'Failed to download file from URL.', 'status': 'Failed'}
         except requests.exceptions.RequestException as e:
-            return Response({'message':f'Error fetching file :{str(e)}'}, status=status.HTTP_400_BAD_REQUEST)
-
+            return {'message':f'Error fetching file :{str(e)}', 'status': 'Failed'}
 
